@@ -28,6 +28,7 @@ API RESTful desarrollada en Laravel que permite gestionar personas y sus mascota
 ```bash
 git clone https://github.com/tuusuario/laravel-mascotas-api.git
 cd laravel-mascotas-api
+cd mascotas-api
 composer install
 cp .env.example .env
 php artisan key:generate
