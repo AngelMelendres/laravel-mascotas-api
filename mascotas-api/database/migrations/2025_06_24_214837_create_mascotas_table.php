@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('especie');
             $table->string('raza')->nullable();
+            $table->text('descripcion_raza')->nullable();
             $table->integer('edad')->nullable();
             $table->foreignId('persona_id')->constrained()->onDelete('cascade');
             $table->string('imagen_url')->nullable(); // Para la API externa

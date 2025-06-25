@@ -19,6 +19,9 @@ Route::middleware('auth:api')->group(function () {
     // CRUD de mascotas
     Route::apiResource('mascotas', MascotaController::class);
 
+
+
     // Consulta avanzada: obtener persona con sus mascotas
-    // Route::get('/personas/{id}/mascotas', [PersonaController::class, 'conMascotas']);
+    Route::get('/personas/{id}/mascotas', [PersonaController::class, 'conMascotas']);
+    Route::get('/razas', [MascotaController::class, 'getRazas']);
 });
