@@ -54,6 +54,12 @@ php artisan migrate --seed
  php artisan serve
 ```
 
+##✅ Generación de pruebas unitarias
+
+```bash
+php artisan test
+```
+
 
 ##📚 Documentación de la API
 ##✅ Generación Swagger
@@ -88,7 +94,7 @@ POST /api/mascotas, etc.
 ##👤 Usuario de Prueba
 ```bash
 {
-  "email": "admin@demo.com",
+  "email": "juan@example.com",
   "password": "12345678"
 }
 ```
