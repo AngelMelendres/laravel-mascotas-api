@@ -71,10 +71,10 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Mascota creada"
+                        "description": "Mascota creada exitosamente"
                     },
                     "422": {
-                        "description": "Validación fallida"
+                        "description": "Error de validación"
                     }
                 },
                 "security": [
@@ -134,9 +134,14 @@
                     }
                 ],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "nombre",
+                                    "edad"
+                                ],
                                 "properties": {
                                     "nombre": {
                                         "type": "string",
@@ -154,10 +159,13 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Mascota actualizada"
+                        "description": "Mascota actualizada exitosamente"
                     },
                     "404": {
                         "description": "Mascota no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
                     }
                 },
                 "security": [
@@ -225,6 +233,72 @@
                         "description": "Parámetro inválido"
                     }
                 }
+            }
+        },
+        "/api/mascotas/{id}/persona": {
+            "get": {
+                "tags": [
+                    "Mascotas"
+                ],
+                "summary": "Obtener la persona dueña de una mascota",
+                "operationId": "da9c54464d2afcba8feda6da0dac9625",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la mascota",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Persona dueña de la mascota"
+                    },
+                    "404": {
+                        "description": "Mascota no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mascotas/{id}/raza": {
+            "get": {
+                "tags": [
+                    "Mascotas"
+                ],
+                "summary": "Obtener información de la raza desde la API externa",
+                "operationId": "705ff40f6c29889f7b9ac90c189b5453",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la mascota",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Datos de la raza"
+                    },
+                    "404": {
+                        "description": "Mascota no encontrada o raza no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/personas": {

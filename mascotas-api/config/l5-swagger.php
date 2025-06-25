@@ -8,6 +8,11 @@ return [
                 'title' => 'L5 Swagger UI',
             ],
 
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+
             'routes' => [
                 /*
                  * Route for accessing api documentation interface

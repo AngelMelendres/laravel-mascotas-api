@@ -21,7 +21,9 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    // Consulta avanzada: obtener persona con sus mascotas
+    // Consulta avanzada: obtener persona con sus mascotas, razas de mascotas
     Route::get('/personas/{id}/mascotas', [PersonaController::class, 'conMascotas']);
     Route::get('/razas', [MascotaController::class, 'getRazas']);
+    Route::get('/mascotas/{id}/persona', [MascotaController::class, 'getPersona']);
+    Route::get('/mascotas/{id}/raza', [MascotaController::class, 'getRaza']);
 });

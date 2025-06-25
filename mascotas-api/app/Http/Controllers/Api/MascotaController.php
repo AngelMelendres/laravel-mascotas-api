@@ -56,10 +56,11 @@ class MascotaController extends Controller
      *             @OA\Property(property="persona_id", type="integer", example=1)
      *         )
      *     ),
-     *     @OA\Response(response=201, description="Mascota creada"),
-     *     @OA\Response(response=422, description="Validación fallida")
+     *     @OA\Response(response=201, description="Mascota creada exitosamente"),
+     *     @OA\Response(response=422, description="Error de validación")
      * )
      */
+
     public function store(StoreMascotaRequest $request)
     {
         $data = $request->validated();
@@ -115,13 +116,16 @@ class MascotaController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
+     *         required=true,
      *         @OA\JsonContent(
+     *             required={"nombre", "edad"},
      *             @OA\Property(property="nombre", type="string", example="Toby"),
      *             @OA\Property(property="edad", type="integer", example=5)
      *         )
      *     ),
-     *     @OA\Response(response=200, description="Mascota actualizada"),
-     *     @OA\Response(response=404, description="Mascota no encontrada")
+     *     @OA\Response(response=200, description="Mascota actualizada exitosamente"),
+     *     @OA\Response(response=404, description="Mascota no encontrada"),
+     *     @OA\Response(response=422, description="Error de validación")
      * )
      */
     public function update(UpdateMascotaRequest $request, $id)
@@ -197,6 +201,86 @@ class MascotaController extends Controller
         return response()->json([
             'especie' => $especie,
             'razas' => $razas
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/mascotas/{id}/persona",
+     *     tags={"Mascotas"},
+     *     summary="Obtener la persona dueña de una mascota",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la mascota",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Persona dueña de la mascota"),
+     *     @OA\Response(response=404, description="Mascota no encontrada")
+     * )
+     */
+    public function getPersona($id)
+    {
+        $mascota = Mascota::with('persona')->findOrFail($id);
+        return response()->json([
+            'mascota_id' => $mascota->id,
+            'persona' => $mascota->persona,
+        ]);
+    }
+
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/mascotas/{id}/raza",
+     *     tags={"Mascotas"},
+     *     summary="Obtener información de la raza desde la API externa",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la mascota",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Datos de la raza"),
+     *     @OA\Response(response=404, description="Mascota no encontrada o raza no encontrada")
+     * )
+     */
+    public function getRaza($id)
+    {
+        $mascota = Mascota::findOrFail($id);
+
+        $especie = strtolower($mascota->especie);
+        $raza = strtolower($mascota->raza);
+
+        $apiUrl = $especie === 'perro'
+            ? 'https://api.thedogapi.com/v1/breeds'
+            : 'https://api.thecatapi.com/v1/breeds';
+
+        $response = Http::get($apiUrl);
+
+        if (!$response->ok()) {
+            return response()->json(['error' => 'No se pudo obtener datos de la raza.'], 500);
+        }
+
+        $data = collect($response->json())
+            ->first(fn($item) => strtolower($item['name']) === $raza);
+
+        if (!$data) {
+            return response()->json(['error' => 'Raza no encontrada.'], 404);
+        }
+
+        return response()->json([
+            'mascota_id' => $mascota->id,
+            'raza' => $data['name'],
+            'descripcion' => $data['temperament'] ?? 'No disponible',
+            'imagen_url' => $data['image']['url'] ?? null,
+            'vida_promedio' => $data['life_span'] ?? null,
+            'peso_kg' => $data['weight']['metric'] ?? null,
+            'altura_cm' => $data['height']['metric'] ?? null,
         ]);
     }
 }

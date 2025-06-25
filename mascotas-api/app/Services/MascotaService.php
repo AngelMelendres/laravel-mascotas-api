@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MascotaService
 {
@@ -25,6 +26,7 @@ class MascotaService
             ];
         }
 
+        Log::warning("No se pudo obtener datos de raza para especie: $especie y raza: $raza");
         return null;
     }
 
@@ -36,6 +38,8 @@ class MascotaService
 
         $imgResponse = Http::get($imgApi);
 
-        return $imgResponse[0]['url'] ?? null;
+        return $imgResponse->ok() && !empty($imgResponse[0]['url'])
+            ? $imgResponse[0]['url']
+            : null;
     }
 }
